@@ -38,7 +38,11 @@ fun MainFrame() {
             }
         }
     }) {
-        Text(text = "current navigation item : $currentNavigationIndex")
+        when (currentNavigationIndex) {
+            0 -> StudyScreen()
+            1 -> TaskScreen()
+            2 -> MineScreen()
+        }
     }
 }
 
