@@ -1,12 +1,14 @@
 package com.linhos.wjycompose.ui.screen
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import com.linhos.wjycompose.model.entity.NavigationItem
@@ -24,7 +26,8 @@ fun MainFrame() {
 
     var currentNavigationIndex by remember { mutableStateOf(0) }
     Scaffold(bottomBar = {
-        BottomNavigation(backgroundColor = MaterialTheme.colors.surface) {
+        BottomNavigation(backgroundColor = MaterialTheme.colors.surface,
+            modifier = Modifier.navigationBarsPadding()) {
             navigationItems.forEachIndexed { index, navigationItem ->
                 BottomNavigationItem(
                     selected = index == currentNavigationIndex,

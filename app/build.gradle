@@ -56,8 +56,11 @@ dependencies {
     implementation 'androidx.compose.material:material:1.2.0'
 
     def nav_version = "2.5.3"
-
+    def accompanist_version ="0.25.1"
     implementation "androidx.navigation:navigation-compose:$nav_version"
+    implementation "com.google.accompanist:accompanist-systemuicontroller:$accompanist_version"
+    implementation "androidx.compose.foundation:foundation:1.2.0"
+
 
 
     testImplementation 'junit:junit:4.13.2'
