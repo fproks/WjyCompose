@@ -27,8 +27,8 @@ fun StudyScreen() {
         /*
         * 学习的标题栏
         * */
-        TopAppBar {
-            Spacer(modifier = Modifier.width(8.dp))
+        TopAppBar(modifier = Modifier.padding(horizontal = 8.dp)) {
+
             Surface(
                 modifier = Modifier.clip(RoundedCornerShape(16.dp)).weight(1f), //圆角
                 color = Color(0x33FFFFFF),  //30%透明度
@@ -60,7 +60,7 @@ fun StudyScreen() {
             Text(text = "26%", fontSize = 12.sp, color = Color.White)
             Spacer(modifier = Modifier.width(8.dp))
             Icon(Icons.Default.Notifications, contentDescription = null, tint = Color.White)
-            Spacer(modifier = Modifier.width(8.dp))
+
 
         }
         Text(modifier = Modifier.align(Alignment.CenterHorizontally), text = "study screen")

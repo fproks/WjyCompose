@@ -41,7 +41,7 @@ fun TopAppBar(modifier: Modifier=Modifier,content: @Composable () -> Unit) {
             .background(Brush.linearGradient(listOf(Blue700, Blue200)))
             .fillMaxWidth()
             .height(appBarHeight + statusBarHeight)
-            .padding(top = statusBarHeight),
+            .padding(top = statusBarHeight).then(modifier),//连接两个modifier
         horizontalArrangement = Arrangement.Center,  //水平居中
         verticalAlignment = Alignment.CenterVertically //垂直居中
     ) { content() }

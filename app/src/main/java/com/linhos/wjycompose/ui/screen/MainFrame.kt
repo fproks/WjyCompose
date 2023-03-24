@@ -11,12 +11,14 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.linhos.wjycompose.model.entity.NavigationItem
+import com.linhos.wjycompose.viewmodel.MainViewModel
 
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun MainFrame() {
+fun MainFrame(mainViewModel: MainViewModel = viewModel()) {
 
     val navigationItems = listOf(
         NavigationItem(title = "学习", icon = Icons.Filled.Home),
@@ -26,8 +28,10 @@ fun MainFrame() {
 
     var currentNavigationIndex by remember { mutableStateOf(0) }
     Scaffold(bottomBar = {
-        BottomNavigation(backgroundColor = MaterialTheme.colors.surface,
-            modifier = Modifier.navigationBarsPadding()) {
+        BottomNavigation(
+            backgroundColor = MaterialTheme.colors.surface,
+            modifier = Modifier.navigationBarsPadding()
+        ) {
             navigationItems.forEachIndexed { index, navigationItem ->
                 BottomNavigationItem(
                     selected = index == currentNavigationIndex,
