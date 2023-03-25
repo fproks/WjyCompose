@@ -6,3 +6,12 @@ data class Category(
     val title: String,
     val icon: ImageVector
 )
+
+data class DataType(
+    val title: String,
+    val icon: ImageVector
+)
+
+data class SwiperEntity(
+    val imageUrl: String
+)

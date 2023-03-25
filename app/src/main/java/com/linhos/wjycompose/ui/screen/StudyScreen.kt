@@ -113,17 +113,19 @@ fun TypesRowTab(viewModel: MainViewModel = viewModel()) {
         TabRow(
             selectedTabIndex = viewModel.typesIndex,
             backgroundColor = Color.Transparent,
-            contentColor = Color(0xFF149EE7)
+            contentColor = Color(0xFF149EE7),
+            indicator = {},
+            divider = {}  //分割线为空
         ) {
             viewModel.types.forEachIndexed { index, type ->
-                Tab(
+                LeadingIconTab(
                     selected = index == viewModel.typesIndex,
                     onClick = { viewModel.updateTypesIndex(index) },
                     selectedContentColor = Color(0xFF149EE7),
-                    unselectedContentColor = Color(0xFF666666)
-                ) {
-                    Text(text = type, modifier = Modifier.padding(vertical = 8.dp), fontSize = 16.sp)
-                }
+                    unselectedContentColor = Color(0xFF666666),
+                    icon = { Icon(type.icon, contentDescription = null) },
+                    text = { Text(text = type.title, modifier = Modifier.padding(vertical = 8.dp), fontSize = 16.sp) }
+                )
             }
         }
     }
