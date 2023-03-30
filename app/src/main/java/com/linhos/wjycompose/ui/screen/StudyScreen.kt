@@ -7,18 +7,31 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.AsyncImage
+import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.accompanist.pager.HorizontalPager
+import com.google.accompanist.pager.rememberPagerState
 import com.linhos.wjycompose.ui.components.TopAppBar
 import com.linhos.wjycompose.viewmodel.MainViewModel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import java.util.Timer
+import java.util.TimerTask
 
+@OptIn(ExperimentalPagerApi::class)
 @Composable
 fun StudyScreen(viewModel: MainViewModel = viewModel()) {
     Column {
@@ -27,6 +40,7 @@ fun StudyScreen(viewModel: MainViewModel = viewModel()) {
 
         CategoryTab(viewModel)
         TypesRowTab(viewModel)
+        Swiper(viewModel)
 
     }
 }
@@ -129,6 +143,51 @@ fun TypesRowTab(viewModel: MainViewModel = viewModel()) {
             }
         }
     }
+}
+
+@OptIn(ExperimentalPagerApi::class)
+@Preview
+@Composable
+fun Swiper(viewModel: MainViewModel = viewModel()) {
+    val virtualPageSize = Int.MAX_VALUE  //循环轮播
+    val actualPageSize = viewModel.swipeUrl.size
+    val initPageIndex = virtualPageSize / 2
+    var pagerState = rememberPagerState(initialPage = initPageIndex)
+    val mod = Math.floorMod(initPageIndex, actualPageSize)
+    if (actualPageSize > 0) {
+        val coroutineScope = rememberCoroutineScope()
+        DisposableEffect(Unit) {
+            val timer = Timer() //定时器
+            timer.schedule(object : TimerTask() {
+                override fun run() {
+                    coroutineScope.launch {
+                        pagerState.animateScrollToPage(pagerState.currentPage + 1) //翻页
+                    }
+
+                }
+
+            }, 3000,3000) //3秒后开始，每3秒执行一次
+            onDispose {
+                timer.cancel()
+            }
+        }
+        HorizontalPager(  //横向轮播图
+            count = virtualPageSize,
+            itemSpacing = 8.dp, //两图间隔
+            modifier = Modifier.clip(RoundedCornerShape(8.dp)).height(200.dp),
+            state = pagerState
+        ) { index ->
+            AsyncImage(
+                model = viewModel.swipeUrl[Math.floorMod(index - mod, actualPageSize)].imageUrl,
+                contentDescription = null,
+                modifier = Modifier.aspectRatio(16 / 9f),
+                contentScale = ContentScale.Crop
+            )
+        }
+    } else {
+        Row(modifier = Modifier.height(200.dp)) { }
+    }
+
 }
 
 

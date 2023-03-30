@@ -39,5 +39,13 @@ class MainViewModel : ViewModel() {
         typesIndex = index
     }
 
-    val swipeUrl by mutableStateOf(listOf(SwiperEntity("https://docs.bughub.icu/compose/assets/banner1.webp")))
+    val swipeUrl by mutableStateOf(
+        listOf(
+            SwiperEntity("https://picsum.photos/200/300?random=1"),
+            SwiperEntity("https://picsum.photos/200/300?random=2"),
+            SwiperEntity("https://picsum.photos/200/300?random=3"),
+            SwiperEntity("https://picsum.photos/200/300?random=4"),
+            SwiperEntity("https://picsum.photos/200/300?random=5")
+        )
+    )
 }
