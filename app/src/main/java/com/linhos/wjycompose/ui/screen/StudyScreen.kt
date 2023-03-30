@@ -24,6 +24,7 @@ import coil.compose.AsyncImage
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
+import com.linhos.wjycompose.ui.components.NotificationContent
 import com.linhos.wjycompose.ui.components.TopAppBar
 import com.linhos.wjycompose.viewmodel.MainViewModel
 import kotlinx.coroutines.delay
@@ -41,6 +42,7 @@ fun StudyScreen(viewModel: MainViewModel = viewModel()) {
         CategoryTab(viewModel)
         TypesRowTab(viewModel)
         Swiper(viewModel)
+        NotificationContent(viewModel)
 
     }
 }

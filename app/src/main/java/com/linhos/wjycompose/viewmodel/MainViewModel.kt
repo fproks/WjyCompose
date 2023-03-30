@@ -48,4 +48,12 @@ class MainViewModel : ViewModel() {
             SwiperEntity("https://picsum.photos/200/300?random=5")
         )
     )
+
+    val notificationData by mutableStateOf(
+        listOf(
+            "测试例句1，这个例句比较短",
+            "测试例句2，这个例句比较长,测试例句2，这个例句比较长，测试例句2，这个例句比较长，测试例句2，这个例句比较长",
+            "测试例句3，这个例句比较短,测试例句3，这个例句比较短"
+        )
+    )
 }
