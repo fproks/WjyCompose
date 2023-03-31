@@ -1,7 +1,9 @@
 package com.linhos.wjycompose.ui.components
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -14,13 +16,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.google.accompanist.pager.ExperimentalPagerApi
-import com.google.accompanist.pager.VerticalPager
+
 
 
 import com.linhos.wjycompose.viewmodel.MainViewModel
 
-@OptIn(ExperimentalPagerApi::class)
+
+@OptIn(ExperimentalFoundationApi::class)
 @Preview
 @Composable
 fun NotificationContent(viewModel: MainViewModel = viewModel()) {
@@ -35,7 +37,7 @@ fun NotificationContent(viewModel: MainViewModel = viewModel()) {
         )
         Spacer(modifier = Modifier.width(8.dp))
         VerticalPager(
-            count = viewModel.notificationData.size,
+            pageCount = viewModel.notificationData.size,
             modifier = Modifier.weight(1f),
             horizontalAlignment = Alignment.Start
         ) { index ->

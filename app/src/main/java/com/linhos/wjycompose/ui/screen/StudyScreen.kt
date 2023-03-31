@@ -1,6 +1,9 @@
 package com.linhos.wjycompose.ui.screen
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -8,7 +11,6 @@ import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -21,18 +23,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
-import com.google.accompanist.pager.ExperimentalPagerApi
-import com.google.accompanist.pager.HorizontalPager
-import com.google.accompanist.pager.rememberPagerState
 import com.linhos.wjycompose.ui.components.NotificationContent
 import com.linhos.wjycompose.ui.components.TopAppBar
 import com.linhos.wjycompose.viewmodel.MainViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.util.Timer
-import java.util.TimerTask
+import java.util.*
 
-@OptIn(ExperimentalPagerApi::class)
+
 @Composable
 fun StudyScreen(viewModel: MainViewModel = viewModel()) {
     Column {
@@ -147,14 +144,15 @@ fun TypesRowTab(viewModel: MainViewModel = viewModel()) {
     }
 }
 
-@OptIn(ExperimentalPagerApi::class)
+
+@OptIn(ExperimentalFoundationApi::class)
 @Preview
 @Composable
 fun Swiper(viewModel: MainViewModel = viewModel()) {
     val virtualPageSize = Int.MAX_VALUE  //循环轮播
     val actualPageSize = viewModel.swipeUrl.size
     val initPageIndex = virtualPageSize / 2
-    var pagerState = rememberPagerState(initialPage = initPageIndex)
+    val pagerState = rememberPagerState(initialPage = initPageIndex)
     val mod = Math.floorMod(initPageIndex, actualPageSize)
     if (actualPageSize > 0) {
         val coroutineScope = rememberCoroutineScope()
@@ -174,8 +172,8 @@ fun Swiper(viewModel: MainViewModel = viewModel()) {
             }
         }
         HorizontalPager(  //横向轮播图
-            count = virtualPageSize,
-            itemSpacing = 8.dp, //两图间隔
+            pageCount = virtualPageSize,
+            pageSpacing = 8.dp, //两图间隔
             modifier = Modifier.clip(RoundedCornerShape(8.dp)).height(200.dp),
             state = pagerState
         ) { index ->
