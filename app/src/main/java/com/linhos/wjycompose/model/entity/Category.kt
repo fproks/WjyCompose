@@ -15,3 +15,5 @@ data class DataType(
 data class SwiperEntity(
     val imageUrl: String
 )
+
+

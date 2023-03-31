@@ -2,6 +2,8 @@ package com.linhos.wjycompose.ui.screen
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -23,23 +25,34 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
+import com.linhos.wjycompose.ui.components.ArticleItem
 import com.linhos.wjycompose.ui.components.NotificationContent
 import com.linhos.wjycompose.ui.components.TopAppBar
+import com.linhos.wjycompose.viewmodel.ArticleViewModel
 import com.linhos.wjycompose.viewmodel.MainViewModel
 import kotlinx.coroutines.launch
 import java.util.*
 
 
 @Composable
-fun StudyScreen(viewModel: MainViewModel = viewModel()) {
+fun StudyScreen(viewModel: MainViewModel = viewModel(), articleViewModel: ArticleViewModel = viewModel()) {
     Column {
 
         StudystatusBar()
 
         CategoryTab(viewModel)
         TypesRowTab(viewModel)
-        Swiper(viewModel)
-        NotificationContent(viewModel)
+        LazyColumn {
+            item {
+                Swiper(viewModel)
+            }
+            item {
+                NotificationContent(viewModel)
+            }
+            items(articleViewModel.list) { article ->
+                ArticleItem(article)
+            }
+        }
 
     }
 }
@@ -166,7 +179,7 @@ fun Swiper(viewModel: MainViewModel = viewModel()) {
 
                 }
 
-            }, 3000,3000) //3秒后开始，每3秒执行一次
+            }, 3000, 3000) //3秒后开始，每3秒执行一次
             onDispose {
                 timer.cancel()
             }
