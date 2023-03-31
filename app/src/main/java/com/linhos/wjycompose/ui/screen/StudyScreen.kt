@@ -28,14 +28,20 @@ import coil.compose.AsyncImage
 import com.linhos.wjycompose.ui.components.ArticleItem
 import com.linhos.wjycompose.ui.components.NotificationContent
 import com.linhos.wjycompose.ui.components.TopAppBar
+import com.linhos.wjycompose.ui.components.VideoItem
 import com.linhos.wjycompose.viewmodel.ArticleViewModel
 import com.linhos.wjycompose.viewmodel.MainViewModel
+import com.linhos.wjycompose.viewmodel.VideoViewModel
 import kotlinx.coroutines.launch
 import java.util.*
 
 
 @Composable
-fun StudyScreen(viewModel: MainViewModel = viewModel(), articleViewModel: ArticleViewModel = viewModel()) {
+fun StudyScreen(
+    viewModel: MainViewModel = viewModel(),
+    articleViewModel: ArticleViewModel = viewModel(),
+    videoViewModel: VideoViewModel = viewModel()
+) {
     Column {
 
         StudystatusBar()
@@ -49,8 +55,11 @@ fun StudyScreen(viewModel: MainViewModel = viewModel(), articleViewModel: Articl
             item {
                 NotificationContent(viewModel)
             }
-            items(articleViewModel.list) { article ->
-                ArticleItem(article)
+            /*  items(articleViewModel.list) { article ->
+                  ArticleItem(article)
+              }*/
+            items(videoViewModel.list) { video ->
+                VideoItem(video)
             }
         }
 
