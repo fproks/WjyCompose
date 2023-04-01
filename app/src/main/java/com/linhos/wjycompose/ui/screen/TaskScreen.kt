@@ -3,10 +3,12 @@ package com.linhos.wjycompose.ui.screen
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
@@ -16,6 +18,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.linhos.wjycompose.ui.components.ChartView
 import com.linhos.wjycompose.ui.components.CircleRing
 import com.linhos.wjycompose.viewmodel.TaskViewModel
 
@@ -40,7 +43,7 @@ fun TaskScreen(taskVM: TaskViewModel = viewModel()) {
                 )
             },
             elevation = 0.dp,
-            modifier = Modifier.statusBarsPadding(), //
+            modifier = Modifier.statusBarsPadding(),
             backgroundColor = Color.Transparent  //背景色透明
         )
         LazyColumn(horizontalAlignment = Alignment.CenterHorizontally) {//横向居中
@@ -82,7 +85,7 @@ fun TaskScreen(taskVM: TaskViewModel = viewModel()) {
                     horizontalArrangement = Arrangement.SpaceEvenly,//均匀分布
                     modifier = Modifier.fillMaxWidth().offset(y = (-40).dp)//整体往上移
                 ) {
-                    Column {
+                    Column() {
                         Text("${taskVM.totalPointOfYear}分", color = Color.White, fontSize = 16.sp)
                         Text("学年规定积分", color = Color.White, fontSize = 12.sp)
                     }
@@ -94,6 +97,21 @@ fun TaskScreen(taskVM: TaskViewModel = viewModel()) {
                         )
                         Text("还差", color = Color.White, fontSize = 12.sp)
                     }
+                }
+            }
+
+            item {
+                Column(
+                    modifier = Modifier
+                        .offset(y = (-20).dp)
+                        .fillParentMaxSize()
+                        .clip(RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp))
+                        .background(Color.White)
+                        .padding(8.dp)
+                ) {
+                    Text("学习明细", fontSize = 16.sp, color = Color(0xFF333333))
+                    Text("最近一周获得积分情况", fontSize = 14.sp, color = Color(0xff999999))
+                    ChartView(taskVM.pointsOfWeek)
                 }
             }
         }
