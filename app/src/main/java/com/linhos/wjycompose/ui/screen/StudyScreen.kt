@@ -55,11 +55,14 @@ fun StudyScreen(
             item {
                 NotificationContent(viewModel)
             }
-            /*  items(articleViewModel.list) { article ->
-                  ArticleItem(article)
-              }*/
-            items(videoViewModel.list) { video ->
-                VideoItem(video)
+            if (viewModel.typesIndex == 0) {
+                items(articleViewModel.list) { article ->
+                    ArticleItem(article)
+                }
+            } else {
+                items(videoViewModel.list) { video ->
+                    VideoItem(video)
+                }
             }
         }
 

@@ -16,6 +16,8 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.linhos.wjycompose.ui.theme.Blue200
 import com.linhos.wjycompose.ui.theme.Blue700
 
+
+val appBarHeight = 56.dp
 /**
  * 标题栏
  */
@@ -35,7 +37,7 @@ fun TopAppBar(modifier: Modifier=Modifier,content: @Composable () -> Unit) {
     val statusBarHeight = with(LocalDensity.current) {
         WindowInsets.statusBars.getTop(this).toDp()
     }
-    val appBarHeight = 56.dp
+
     Row(
         modifier = Modifier
             .background(Brush.linearGradient(listOf(Blue700, Blue200)))

@@ -1,7 +1,9 @@
 package com.linhos.wjycompose.ui.screen
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
@@ -45,10 +47,12 @@ fun MainFrame(mainViewModel: MainViewModel = viewModel()) {
             }
         }
     }) {
-        when (currentNavigationIndex) {
-            0 -> StudyScreen()
-            1 -> TaskScreen()
-            2 -> MineScreen()
+        Box(modifier = Modifier.padding(it)) {//把bottomNavigation 的padding 给添加上去，不然会产生遮盖
+            when (currentNavigationIndex) {
+                0 -> StudyScreen()
+                1 -> TaskScreen()
+                2 -> MineScreen()
+            }
         }
     }
 }
