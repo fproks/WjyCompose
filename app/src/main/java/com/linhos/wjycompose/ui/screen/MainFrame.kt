@@ -1,6 +1,5 @@
 package com.linhos.wjycompose.ui.screen
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
@@ -18,9 +17,8 @@ import com.linhos.wjycompose.model.entity.NavigationItem
 import com.linhos.wjycompose.viewmodel.MainViewModel
 
 
-@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun MainFrame(mainViewModel: MainViewModel = viewModel()) {
+fun MainFrame(mainViewModel: MainViewModel = viewModel(), onNavigateToArticle: () -> Unit = {}) {
 
     val navigationItems = listOf(
         NavigationItem(title = "学习", icon = Icons.Filled.Home),
@@ -49,7 +47,7 @@ fun MainFrame(mainViewModel: MainViewModel = viewModel()) {
     }) {
         Box(modifier = Modifier.padding(it)) {//把bottomNavigation 的padding 给添加上去，不然会产生遮盖
             when (currentNavigationIndex) {
-                0 -> StudyScreen()
+                0 -> StudyScreen(onNavigateToArticle = onNavigateToArticle) //传送导航函数
                 1 -> TaskScreen()
                 2 -> MineScreen()
             }

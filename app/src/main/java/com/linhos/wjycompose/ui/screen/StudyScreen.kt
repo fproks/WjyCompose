@@ -1,6 +1,8 @@
 package com.linhos.wjycompose.ui.screen
 
+import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -40,7 +42,8 @@ import java.util.*
 fun StudyScreen(
     viewModel: MainViewModel = viewModel(),
     articleViewModel: ArticleViewModel = viewModel(),
-    videoViewModel: VideoViewModel = viewModel()
+    videoViewModel: VideoViewModel = viewModel(),
+    onNavigateToArticle: () -> Unit = {}
 ) {
     Column {
 
@@ -57,7 +60,10 @@ fun StudyScreen(
             }
             if (viewModel.typesIndex == 0) {
                 items(articleViewModel.list) { article ->
-                    ArticleItem(article)
+                    //添加了一个导航
+                    ArticleItem(article, modifier = Modifier.clickable {
+                        Log.d("===","study click")
+                        onNavigateToArticle() })
                 }
             } else {
                 items(videoViewModel.list) { video ->

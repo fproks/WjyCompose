@@ -13,8 +13,8 @@ import androidx.compose.ui.unit.sp
 import com.linhos.wjycompose.model.entity.ArticleEntity
 
 @Composable
-fun ArticleItem(article: ArticleEntity) {
-    Column(modifier = Modifier.padding(8.dp)) {
+fun ArticleItem(article: ArticleEntity, modifier: Modifier = Modifier) {
+    Column(modifier = modifier.padding(8.dp)) {
         Text(
             text = article.title,
             color = Color(0xFF333333),
