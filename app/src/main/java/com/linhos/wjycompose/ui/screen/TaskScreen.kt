@@ -111,7 +111,18 @@ fun TaskScreen(taskVM: TaskViewModel = viewModel()) {
                 ) {
                     Text("学习明细", fontSize = 16.sp, color = Color(0xFF333333))
                     Text("最近一周获得积分情况", fontSize = 14.sp, color = Color(0xff999999))
-                    ChartView(taskVM.pointsOfWeek)
+                    ChartView(taskVM.pointsOfWeek, modifier = Modifier.padding(vertical = 8.dp))
+                    Row() {
+                        taskVM.weeks.forEach {
+                            Text(
+                                text = it,
+                                fontSize = 12.sp,
+                                color = Color(0xFF999999),
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.weight(1f)
+                            )
+                        }
+                    }
                 }
             }
         }

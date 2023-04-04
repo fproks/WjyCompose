@@ -15,14 +15,14 @@ import androidx.compose.ui.unit.dp
  * 折线图
  */
 @Composable
-fun ChartView(points: List<Double>) {
+fun ChartView(points: List<Double>,modifier: Modifier=Modifier) {
     val canvasWidth = LocalConfiguration.current.screenWidthDp - 8 * 2
     val heightForRow = 24  //单行高度
     val countForRow = 5  //行数
     val circleRadius = 2.5
     val canvasHeight = heightForRow * countForRow + circleRadius * 2
 
-    Canvas(modifier = Modifier.size(width = canvasWidth.dp, height = canvasHeight.dp)) {
+    Canvas(modifier = modifier.size(width = canvasWidth.dp, height = canvasHeight.dp)) {
         for (index in 0..countForRow) {
             val strtY = (heightForRow * index + circleRadius).dp.toPx()
             drawLine(Color(0xffEEEEEE), start = Offset(0f, strtY), end = Offset(size.width, strtY), strokeWidth = 2.5f)
