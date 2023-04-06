@@ -31,7 +31,7 @@ fun NaviHostApp() {
         composable(Desionations.ArticleDetail.route, enterTransition = {
             slideIntoContainer(AnimatedContentScope.SlideDirection.Left)
         }) { //这个路由，跳转到这里面来
-            ArticleDetailScreen()
+            ArticleDetailScreen(onBack = { navController.popBackStack() })//点击后返回
         }
 
     }

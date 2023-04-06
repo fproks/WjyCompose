@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.linhos.wjycompose.ui.components.ChartView
 import com.linhos.wjycompose.ui.components.CircleRing
+import com.linhos.wjycompose.ui.components.DailyTaskContent
 import com.linhos.wjycompose.viewmodel.TaskViewModel
 
 
@@ -123,6 +124,15 @@ fun TaskScreen(taskVM: TaskViewModel = viewModel()) {
                             )
                         }
                     }
+                    Text(
+                        text = "今日获得0积分，快去完成下面的任务吧",
+                        color = Color(0xFF149EE7),
+                        fontSize = 14.sp,
+                        modifier = Modifier.padding(vertical = 8.dp).clip(RoundedCornerShape(4.dp))
+                            .background(Color(0x33149EE7)).padding(8.dp)
+                            .fillMaxWidth()
+                    )
+                    DailyTaskContent()
                 }
             }
         }
