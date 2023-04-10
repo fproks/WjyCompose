@@ -10,16 +10,19 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FormatSize
 import androidx.compose.material.icons.filled.NavigateBefore
-import androidx.compose.material.icons.filled.TextFormat
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.linhos.wjycompose.ui.components.MyWebView
+import com.linhos.wjycompose.ui.components.rememberMyWebViewStateWithData
+import com.linhos.wjycompose.viewmodel.ArticleViewModel
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun ArticleDetailScreen(onBack: () -> Unit) {
+fun ArticleDetailScreen(articleViewModel: ArticleViewModel = viewModel(), onBack: () -> Unit) {
     Scaffold(
         topBar = {
             TopAppBar(title = {
@@ -39,15 +42,19 @@ fun ArticleDetailScreen(onBack: () -> Unit) {
                         })
                 },
                 actions = {
-                    Icon(imageVector = Icons.Default.FormatSize, contentDescription = null,
+                    Icon(
+                        imageVector = Icons.Default.FormatSize, contentDescription = null,
                         modifier = Modifier.clickable {
                             //TODO 设置文字大小
-                        }.padding(8.dp)
+                        }.padding(start = 16.dp, end = 8.dp)
                     )
                 })
         },
         modifier = Modifier.background(MaterialTheme.colors.primary).statusBarsPadding(),
     ) {
         Text("这是文章详情")
+        //val state = rememberWebViewStateWithHTMLData("<h1> wenView</h1>")
+        //WebView(state)
+        MyWebView(rememberMyWebViewStateWithData(articleViewModel.content))
     }
 }
