@@ -18,7 +18,11 @@ import com.linhos.wjycompose.viewmodel.MainViewModel
 
 
 @Composable
-fun MainFrame(mainViewModel: MainViewModel = viewModel(), onNavigateToArticle: () -> Unit = {}) {
+fun MainFrame(
+    mainViewModel: MainViewModel = viewModel(),
+    onNavigateToArticle: () -> Unit = {},
+    onNavigateToVideo: () -> Unit={}//增添一个路由
+) {
 
     val navigationItems = listOf(
         NavigationItem(title = "学习", icon = Icons.Filled.Home),
@@ -47,7 +51,7 @@ fun MainFrame(mainViewModel: MainViewModel = viewModel(), onNavigateToArticle: (
     }) {
         Box(modifier = Modifier.padding(it)) {//把bottomNavigation 的padding 给添加上去，不然会产生遮盖
             when (currentNavigationIndex) {
-                0 -> StudyScreen(onNavigateToArticle = onNavigateToArticle) //传送导航函数
+                0 -> StudyScreen(onNavigateToArticle = onNavigateToArticle, onNavigateToVideo = onNavigateToVideo) //传送导航函数
                 1 -> TaskScreen()
                 2 -> MineScreen()
             }

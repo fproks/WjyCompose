@@ -23,15 +23,23 @@ fun NaviHostApp() {
             enterTransition = {
                 slideIntoContainer(AnimatedContentScope.SlideDirection.Up)//上滑进入
             }) { //这个路由，跳转到这个里面的函数里
-            MainFrame() {
-                Log.d(TAG, "navigate to MainFrame")
+            MainFrame(onNavigateToArticle = {  //导航到article 的路由
                 navController.navigate(Desionations.ArticleDetail.route)
-            }
+            }, onNavigateToVideo = { //导航到video的路由
+                navController.navigate(Desionations.VideoDetail.route)
+            })
         }
         composable(Desionations.ArticleDetail.route, enterTransition = {
             slideIntoContainer(AnimatedContentScope.SlideDirection.Left)
         }) { //这个路由，跳转到这里面来
             ArticleDetailScreen(onBack = { navController.popBackStack() })//点击后返回
+        }
+
+        //视频导航
+        composable(Desionations.VideoDetail.route, enterTransition = {
+            slideIntoContainer(AnimatedContentScope.SlideDirection.Down)
+        }) {
+            VideoDetailScreen(onBack = { navController.popBackStack() })
         }
 
     }

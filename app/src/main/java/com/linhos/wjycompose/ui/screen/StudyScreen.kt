@@ -43,7 +43,8 @@ fun StudyScreen(
     viewModel: MainViewModel = viewModel(),
     articleViewModel: ArticleViewModel = viewModel(),
     videoViewModel: VideoViewModel = viewModel(),
-    onNavigateToArticle: () -> Unit = {}
+    onNavigateToArticle: () -> Unit = {},
+    onNavigateToVideo: () -> Unit = {}
 ) {
     Column {
 
@@ -62,12 +63,17 @@ fun StudyScreen(
                 items(articleViewModel.list) { article ->
                     //添加了一个导航
                     ArticleItem(article, modifier = Modifier.clickable {
-                        Log.d("===","study click")
-                        onNavigateToArticle() })
+                        Log.d("===", "study click")
+                        onNavigateToArticle()
+                    })
                 }
             } else {
                 items(videoViewModel.list) { video ->
-                    VideoItem(video)
+                    //添加导航点击事件
+                    VideoItem(video, modifier = Modifier.clickable {
+                        Log.d("===", "navigate to video")
+                        onNavigateToVideo()
+                    })
                 }
             }
         }

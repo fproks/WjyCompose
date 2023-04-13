@@ -6,4 +6,6 @@ sealed class Desionations(val route: String) {
 
     //文章详情页
     object ArticleDetail : Desionations("ArticleDetail")
+
+    object VideoDetail: Desionations("VideoDetail")
 }

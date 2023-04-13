@@ -28,7 +28,7 @@ import com.linhos.wjycompose.model.entity.VideoEntity
  * 使用constrain layout 设置compose 间的关系
  */
 @Composable
-fun VideoItem(videoEntity: VideoEntity) {
+fun VideoItem(videoEntity: VideoEntity,modifier: Modifier=Modifier) {
     /* 两种不同的写法
     val constraintSet = ConstraintSet {
          constrain(cover) {
@@ -57,7 +57,7 @@ fun VideoItem(videoEntity: VideoEntity) {
              end.linkTo(parent.end)
          }
      }*/
-    ConstraintLayout {
+    ConstraintLayout(modifier=modifier) {//传递click
         val (cover, title, type, duration, divider) = createRefs()
         AsyncImage(
             videoEntity.imageUrl,
