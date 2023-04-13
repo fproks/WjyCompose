@@ -16,8 +16,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.linhos.wjycompose.ui.components.MyWebView
-import com.linhos.wjycompose.ui.components.rememberMyWebViewStateWithData
+import com.linhos.app.module.webview.MyWebView
+import com.linhos.app.module.webview.rememberMyWebViewStateWithData
 import com.linhos.wjycompose.viewmodel.ArticleViewModel
 import kotlinx.coroutines.launch
 
@@ -68,6 +68,7 @@ fun ArticleDetailScreen(articleViewModel: ArticleViewModel = viewModel(), onBack
                     fontScale = it
                 }, onValueChangeFinished = {
                     coroutineScope.launch {
+                        Log.d("===", "onValueChangeFinished: $fontScale")
                         myWebViewState.evaluateMyJavaScript("document.body.style.zoom = $fontScale")
                     }
                 }, steps = 3, valueRange = 0.75f..1.75f)

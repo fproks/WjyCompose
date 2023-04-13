@@ -1,8 +1,11 @@
-package com.linhos.wjycompose.ui.components
+package com.linhos.app.module.webview
 
 import android.annotation.SuppressLint
+import android.graphics.Bitmap
 import android.util.Log
+import android.webkit.WebChromeClient
 import android.webkit.WebView
+import android.webkit.WebViewClient
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
@@ -22,8 +25,22 @@ fun MyWebView(state: MyWebViewState, modifier: Modifier = Modifier) {
         }
     }
 
+
+
     AndroidView(factory = { context ->
         WebView(context).apply {
+            webChromeClient = object : WebChromeClient() {
+                override fun onReceivedTitle(view: WebView?, title: String?) {
+                    super.onReceivedTitle(view, title)
+                    state.pageTitle = title
+                }
+            }
+            webViewClient = object : WebViewClient() {
+                override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
+                    super.onPageStarted(view, url, favicon)
+                    state.pageTitle = null
+                }
+            }
             with(settings) { javaScriptEnabled = true }
         }.also { webView = it }
     }, modifier = modifier) { view ->
@@ -50,22 +67,26 @@ sealed class WebContent() {
 class MyWebViewState(webContent: WebContent, pageTitle: String? = null) {
     var content by mutableStateOf(webContent)
     var pageTitle: String? by mutableStateOf(pageTitle)
+        internal set
 
-    enum class EventType {
+    private enum class EventType {
         EVALUATE_JAVASCRIPT  //执行JS方法
     }
 
-    class Event(val eventType: EventType, val args: String, val callback: ((String) -> Unit)?)
+    private class Event(val eventType: EventType, val args: String, val callback: ((String) -> Unit)?)
 
     //订阅流
     private val enevts: MutableSharedFlow<Event> = MutableSharedFlow()
 
     //获取流
-    suspend fun WebView.handleEvent() {
+    internal suspend fun WebView.handleEvent() {
         enevts.collect { event ->  //接收事件
             Log.d("===", "collect")
             when (event.eventType) {
-                EventType.EVALUATE_JAVASCRIPT -> evaluateJavascript(event.args, event.callback)  //调用webview 的evaluateJavascript 函数
+                EventType.EVALUATE_JAVASCRIPT -> evaluateJavascript(
+                    event.args,
+                    event.callback
+                )  //调用webview 的evaluateJavascript 函数
             }
         }
     }
