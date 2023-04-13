@@ -1,15 +1,32 @@
 package com.linhos.wjycompose.ui.components
 
+import android.annotation.SuppressLint
+import android.util.Log
 import android.webkit.WebView
 import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
+import kotlinx.coroutines.flow.MutableSharedFlow
 
 
+@SuppressLint("SetJavaScriptEnabled")
 @Composable
-fun MyWebView(state: MyWebViewState) {
+fun MyWebView(state: MyWebViewState, modifier: Modifier = Modifier) {
+
+    var webView by remember {
+        mutableStateOf<WebView?>(null)
+    }
+    LaunchedEffect(webView, state) {
+        with(state) {
+            webView?.handleEvent()
+        }
+    }
+
     AndroidView(factory = { context ->
-        WebView(context)
-    }) { view ->
+        WebView(context).apply {
+            with(settings) { javaScriptEnabled = true }
+        }.also { webView = it }
+    }, modifier = modifier) { view ->
         when (val content = state.content) {
             is WebContent.Url -> {
                 if (content.url.isNotEmpty() && content.url != view.url)
@@ -33,6 +50,32 @@ sealed class WebContent() {
 class MyWebViewState(webContent: WebContent, pageTitle: String? = null) {
     var content by mutableStateOf(webContent)
     var pageTitle: String? by mutableStateOf(pageTitle)
+
+    enum class EventType {
+        EVALUATE_JAVASCRIPT  //执行JS方法
+    }
+
+    class Event(val eventType: EventType, val args: String, val callback: ((String) -> Unit)?)
+
+    //订阅流
+    private val enevts: MutableSharedFlow<Event> = MutableSharedFlow()
+
+    //获取流
+    suspend fun WebView.handleEvent() {
+        enevts.collect { event ->  //接收事件
+            Log.d("===", "collect")
+            when (event.eventType) {
+                EventType.EVALUATE_JAVASCRIPT -> evaluateJavascript(event.args, event.callback)  //调用webview 的evaluateJavascript 函数
+            }
+        }
+    }
+
+    //把JavaScript 命令通过流的方式发过去
+    suspend fun evaluateMyJavaScript(script: String, resultCallback: ((String) -> Unit)? = {}) {
+        Log.d("===", "evaluateMyJavaScript: $script")
+        val event = Event(EventType.EVALUATE_JAVASCRIPT, script, resultCallback)
+        enevts.emit(event)  //发射事件
+    }
 }
 
 
