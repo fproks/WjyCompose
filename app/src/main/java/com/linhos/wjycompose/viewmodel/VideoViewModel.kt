@@ -142,4 +142,6 @@ class VideoViewModel : ViewModel() {
 $end""".trimIndent()
     )
 
+    var videoUrl by mutableStateOf("https://1251245530.vod2.myqcloud.com/34386e2dvodtranssh1251245530/fe4d4574243791581392273409/video_10_0.m3u8")
+
 }

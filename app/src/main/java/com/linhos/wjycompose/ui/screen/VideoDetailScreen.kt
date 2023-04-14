@@ -11,7 +11,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -19,16 +18,17 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.linhos.app.module.webview.MyWebView
 import com.linhos.app.module.webview.rememberMyWebViewStateWithData
 import com.linhos.wjycompose.ui.components.video.VideoView
+import com.linhos.wjycompose.ui.components.video.rememberVodController
 import com.linhos.wjycompose.viewmodel.VideoViewModel
-import com.tencent.rtmp.TXVodPlayer
 
 
 @Composable
 fun VideoDetailScreen(videoViewModel: VideoViewModel = viewModel(), onBack: () -> Unit = {}) {
     var webViewState = rememberMyWebViewStateWithData(videoViewModel.content)
-    val vodPlayer = TXVodPlayer(LocalContext.current)
-    LaunchedEffect(vodPlayer) {
-        vodPlayer.startVodPlay("https://1251245530.vod2.myqcloud.com/34386e2dvodtranssh1251245530/fe4d4574243791581392273409/video_10_0.m3u8")
+    val vodContoller = rememberVodController()
+    LaunchedEffect(vodContoller) {
+        vodContoller.startPlay(videoViewModel.videoUrl)
+
     }
     Scaffold(
         topBar = {
@@ -58,7 +58,8 @@ fun VideoDetailScreen(videoViewModel: VideoViewModel = viewModel(), onBack: () -
     ) { padding ->
         Column(modifier = Modifier.padding(padding).fillMaxSize()) {
             Box(modifier = Modifier.height(200.dp)) {
-                VideoView(vodPlayer)
+                vodContoller.setUpView { player -> VideoView(player) }
+
             }
 
 

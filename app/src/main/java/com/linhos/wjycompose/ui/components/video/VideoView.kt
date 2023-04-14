@@ -1,7 +1,10 @@
 package com.linhos.wjycompose.ui.components.video
 
 import android.view.LayoutInflater
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.linhos.wjycompose.R
 import com.tencent.rtmp.TXVodPlayer
@@ -19,5 +22,5 @@ fun VideoView(vodPlayer: TXVodPlayer) {
         /* TXCloudVideoView(context).apply {
              vodPlayer.setPlayerView(this)
          }*/
-    })
+    }, modifier = Modifier.heightIn(max = 200.dp)) //不知道为啥，不起作用
 }
