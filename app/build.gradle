@@ -18,6 +18,10 @@ android {
         vectorDrawables {
             useSupportLibrary true
         }
+        ndk {
+            abiFilters  "arm64-v8a"
+        }
+
     }
 
     buildTypes {
@@ -75,6 +79,9 @@ dependencies {
     implementation "com.google.accompanist:accompanist-navigation-animation:0.30.0"
     implementation "com.google.accompanist:accompanist-webview:0.30.0"
     implementation project(path: ":webview")
+
+    //腾讯视频SDK
+    implementation 'com.tencent.liteav:LiteAVSDK_Player:latest.release'
 
 
     testImplementation 'junit:junit:4.13.2'
