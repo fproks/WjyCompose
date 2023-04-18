@@ -12,10 +12,19 @@ import com.tencent.rtmp.TXVodPlayer
 class VideoController(context: Context) {
 
     val playerValue = PlayerValue()
-    private val videoPlayer = TXVodPlayer(context).apply {
+    val videoPlayer = TXVodPlayer(context).apply {
         setVodListener(object : ITXVodPlayListener {
             override fun onPlayEvent(player: TXVodPlayer?, event: Int, param: Bundle?) {
                 when (event) {
+                    TXLiveConstants.PLAY_EVT_PLAY_LOADING -> {
+                        playerValue.state = PlayState.Loading
+                    }
+
+                    TXLiveConstants.PLAY_EVT_VOD_PLAY_PREPARED,
+                    TXLiveConstants.PLAY_EVT_RCV_FIRST_I_FRAME,
+                    TXLiveConstants.PLAY_EVT_VOD_LOADING_END -> {
+                        playerValue.state = PlayState.Playing
+                    }
                     //获取视频时长和进度
                     TXLiveConstants.PLAY_EVT_PLAY_PROGRESS -> {
                         playerValue.duration = param?.getInt(TXLiveConstants.EVT_PLAY_DURATION)?.toLong() ?: 0L
@@ -26,7 +35,7 @@ class VideoController(context: Context) {
             }
 
             override fun onNetStatus(player: TXVodPlayer?, args: Bundle?) {
-                TODO("Not yet implemented")
+
             }
 
         })
@@ -43,20 +52,20 @@ class VideoController(context: Context) {
 
     fun pause() {
         videoPlayer.pause()
+        playerValue.state = PlayState.Pause
     }
 
     fun resume() {
         videoPlayer.resume()
+        playerValue.state = PlayState.Playing
     }
 
 
-    fun seekTo(millSeconds: Long) {
-        videoPlayer.seek((millSeconds / 100).toInt())
+    fun seekTo(seconds: Long) {
+        videoPlayer.seek(seconds.toInt())
     }
 
-    fun setUpView(view: @Composable (TXVodPlayer) -> Unit) {
-        view(videoPlayer)
-    }
+
 }
 
 @Composable

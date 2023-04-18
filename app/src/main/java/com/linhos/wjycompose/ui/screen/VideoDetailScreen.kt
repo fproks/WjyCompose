@@ -3,21 +3,19 @@ package com.linhos.wjycompose.ui.screen
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.NavigateBefore
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.linhos.app.module.webview.MyWebView
 import com.linhos.app.module.webview.rememberMyWebViewStateWithData
-import com.linhos.wjycompose.ui.components.video.VideoView
+import com.linhos.wjycompose.ui.components.video.VideoPlayer
 import com.linhos.wjycompose.ui.components.video.rememberVodController
 import com.linhos.wjycompose.viewmodel.VideoViewModel
 
@@ -58,12 +56,12 @@ fun VideoDetailScreen(videoViewModel: VideoViewModel = viewModel(), onBack: () -
     ) { padding ->
         Column(modifier = Modifier.padding(padding).fillMaxSize()) {
             Box(modifier = Modifier.height(200.dp)) {
-                vodContoller.setUpView { player -> VideoView(player) }
+                VideoPlayer(vodContoller)
 
             }
+            MyWebView(webViewState)
 
-
-            LazyColumn {
+         /*   LazyColumn {
                 item {
                     Spacer(modifier = Modifier.height(40.dp))
                 }
@@ -73,7 +71,7 @@ fun VideoDetailScreen(videoViewModel: VideoViewModel = viewModel(), onBack: () -
                 item {
                     MyWebView(webViewState)
                 }
-            }
+            }*/
         }
 
     }
