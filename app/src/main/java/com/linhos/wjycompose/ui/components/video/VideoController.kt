@@ -39,11 +39,12 @@ class VideoController(context: Context) {
             }
 
         })
-    }
+
+    }.also { it.setRenderMode(TXLiveConstants.RENDER_MODE_FULL_FILL_SCREEN) }
 
     fun startPlay(url: String) {
         videoPlayer.startVodPlay(url)
-        videoPlayer.setRenderRotation(TXLiveConstants.RENDER_MODE_ADJUST_RESOLUTION)
+        playerValue.state=PlayState.Playing
     }
 
     fun stopPlay() {

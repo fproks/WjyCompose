@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 
 @SuppressLint("SetJavaScriptEnabled")
 @Composable
-fun MyWebView(state: MyWebViewState, modifier: Modifier = Modifier) {
+fun MyWebView(state: MyWebViewState) {
 
     var webView by remember {
         mutableStateOf<WebView?>(null)
@@ -43,7 +43,7 @@ fun MyWebView(state: MyWebViewState, modifier: Modifier = Modifier) {
             }
             with(settings) { javaScriptEnabled = true }
         }.also { webView = it }
-    }, modifier = modifier) { view ->
+    }) { view ->
         when (val content = state.content) {
             is WebContent.Url -> {
                 if (content.url.isNotEmpty() && content.url != view.url)
