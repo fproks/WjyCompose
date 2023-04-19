@@ -1,7 +1,12 @@
 package com.linhos.wjycompose.ui.screen
 
+import android.app.Activity
 import android.content.res.Configuration
-import android.util.Log
+import android.os.Build
+import android.view.View
+import android.view.WindowInsets
+import android.view.WindowInsetsController
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -13,6 +18,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -23,21 +29,32 @@ import com.linhos.app.module.webview.rememberMyWebViewStateWithData
 import com.linhos.wjycompose.ui.components.video.VideoPlayer
 import com.linhos.wjycompose.ui.components.video.rememberVodController
 import com.linhos.wjycompose.viewmodel.VideoViewModel
+import java.sql.Time
+import java.util.Timer
+import java.util.TimerTask
 
 
+@RequiresApi(Build.VERSION_CODES.R)
 @Composable
 fun VideoDetailScreen(videoViewModel: VideoViewModel = viewModel(), onBack: () -> Unit = {}) {
     var webViewState = rememberMyWebViewStateWithData(videoViewModel.content)
     val vodContoller = rememberVodController()
     val systemUiController = rememberSystemUiController() //控制状态栏
     val configuration = LocalConfiguration.current
+    val activity =(LocalContext.current as Activity)
     LaunchedEffect(configuration.orientation) {
         //横屏时状态栏隐藏并透明
         if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
             systemUiController.isSystemBarsVisible = true
         } else {
-            systemUiController.isSystemBarsVisible = false
-            systemUiController.setSystemBarsColor(Color.Transparent)
+            //systemUiController.isSystemBarsVisible = false
+            //systemUiController.setSystemBarsColor(Color.Transparent)
+
+            //自动隐藏状态栏，下拉出现后过一段时间自动隐藏
+            activity.window.insetsController?.apply {
+                systemBarsBehavior=WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+                hide(WindowInsets.Type.systemBars())
+            }
         }
     }
 
@@ -90,6 +107,7 @@ fun VideoDetailScreen(videoViewModel: VideoViewModel = viewModel(), onBack: () -
 
         }
     }else{
+
         Column (modifier = Modifier.fillMaxSize()) {
             Box(modifier = Modifier.fillMaxSize()){
                 VideoPlayer(vodContoller,videoViewModel.videoUrl)
