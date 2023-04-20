@@ -3,14 +3,12 @@ package com.linhos.wjycompose.ui.components.video
 import android.app.Activity
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Fullscreen
-import androidx.compose.material.icons.filled.FullscreenExit
-import androidx.compose.material.icons.filled.Pause
-import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,7 +21,7 @@ import java.util.*
 
 
 @Composable
-fun VideoPlayer(vodController: VideoController, videoUrl: String) {
+fun VideoPlayer(vodController: VideoController) {
     //存储时间字符串
     var timeFormatterText by remember { mutableStateOf("") }
 
@@ -44,6 +42,7 @@ fun VideoPlayer(vodController: VideoController, videoUrl: String) {
         )
     }
 
+
     val configuration = LocalConfiguration.current  //获取当前屏幕状态
 
     /*  var coverImage by remember { mutableStateOf<Bitmap?>(null) }
@@ -59,31 +58,42 @@ fun VideoPlayer(vodController: VideoController, videoUrl: String) {
       }*/
 
     val activity = LocalContext.current as Activity
+    BackHandler(configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+        if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+        }
+    }
     //控制控制器是否显示
     var showControllerBar by remember { mutableStateOf(false) }
     var timer: Timer? = null
-    Box(modifier = Modifier.fillMaxWidth().clickable {  //点击后控制器出现
-        showControllerBar = !showControllerBar
-        timer?.cancel()
-        timer = Timer()
-        timer?.schedule(object : TimerTask() {
-            override fun run() {
-                showControllerBar = false
-                timer?.cancel()
-            }
-        }, 3000L, 3000L)
-    }) {
+    Box(modifier = Modifier
+        .fillMaxWidth()
+        .clickable {  //点击后控制器出现
+            showControllerBar = !showControllerBar
+            timer?.cancel()
+            timer = Timer()
+            timer?.schedule(object : TimerTask() {
+                override fun run() {
+                    showControllerBar = false
+                    timer?.cancel()
+                }
+            }, 3000L, 3000L)
+        }) {
         VideoView(vodController.videoPlayer)
 
         //视频加载层
         if (vodController.playerValue.state == PlayState.Loading) {
-            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center).size(60.dp))
+            CircularProgressIndicator(
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .size(60.dp)
+            )
         }
 
         if (vodController.playerValue.state == PlayState.None) {
             Box(modifier = Modifier.fillMaxSize()) {
                 IconButton(onClick = {
-                    vodController.startPlay(videoUrl)
+                    vodController.startPlay()
                 }, modifier = Modifier.align(Alignment.Center)) {
                     Icon(
                         imageVector = Icons.Default.PlayArrow,
@@ -97,20 +107,50 @@ fun VideoPlayer(vodController: VideoController, videoUrl: String) {
 
         //视频控制层
         if (showControllerBar) {
-            Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.SpaceBetween) {
-                Spacer(modifier = Modifier.height(1.dp))  //主要是为了上下排列用的，让row放到下面
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.SpaceBetween
+            ) {
+                if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
+                    Spacer(modifier = Modifier.height(1.dp))  //主要是为了上下排列用的，让row放到下面
+                } else {
+                    //切回竖屏按键
+                    IconButton(
+                        onClick = {
+                            activity.requestedOrientation =
+                                ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+                        }, modifier = Modifier
+                            .padding(16.dp)
+                            .size(45.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.ArrowBack,
+                            contentDescription = null,
+                            tint = Color.White
+                        )
+                    }
+                }
+                //下面的控制条
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     if (vodController.playerValue.state == PlayState.Playing) {  //播放状态时显示暂停按钮
                         IconButton(onClick = {
                             vodController.pause()
                         }) {
-                            Icon(imageVector = Icons.Default.Pause, contentDescription = null, tint = Color.White)
+                            Icon(
+                                imageVector = Icons.Default.Pause,
+                                contentDescription = null,
+                                tint = Color.White
+                            )
                         }
                     } else {
                         IconButton(onClick = {
                             vodController.resume()
                         }) {
-                            Icon(imageVector = Icons.Default.PlayArrow, contentDescription = null, tint = Color.White)
+                            Icon(
+                                imageVector = Icons.Default.PlayArrow,
+                                contentDescription = null,
+                                tint = Color.White
+                            )
                         }
                     }
 
@@ -127,18 +167,28 @@ fun VideoPlayer(vodController: VideoController, videoUrl: String) {
                     Text(text = timeFormatterText, color = Color.White, fontSize = 14.sp)
 
                     //切换横竖屏
-                    if(configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
+                    if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
                         IconButton(onClick = {
                             //切换横屏
-                            activity.requestedOrientation =ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+                            activity.requestedOrientation =
+                                ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
                         }) {
-                            Icon(imageVector = Icons.Default.Fullscreen, contentDescription = null, tint = Color.White)
+                            Icon(
+                                imageVector = Icons.Default.Fullscreen,
+                                contentDescription = null,
+                                tint = Color.White
+                            )
                         }
-                    }else{
+                    } else {
                         IconButton(onClick = {
-                            activity.requestedOrientation =ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+                            activity.requestedOrientation =
+                                ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
                         }) {
-                            Icon(imageVector = Icons.Default.FullscreenExit, contentDescription = null, tint = Color.White)
+                            Icon(
+                                imageVector = Icons.Default.FullscreenExit,
+                                contentDescription = null,
+                                tint = Color.White
+                            )
                         }
                     }
                     Spacer(modifier = Modifier.width(8.dp))
