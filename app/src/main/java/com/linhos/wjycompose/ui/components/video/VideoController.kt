@@ -56,11 +56,13 @@ class VideoController(context: Context, vodUrl: String) {
     }
 
     fun pause() {
+        if(playerValue.state!=PlayState.Playing) return
         videoPlayer.pause()
         playerValue.state = PlayState.Pause
     }
 
     fun resume() {
+        if (playerValue.state != PlayState.Pause) return
         videoPlayer.resume()
         playerValue.state = PlayState.Playing
     }

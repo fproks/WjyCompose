@@ -3,21 +3,49 @@ package com.linhos.wjycompose.ui.components.video
 import android.app.Activity
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
+import android.util.Log
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.Slider
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
-import androidx.compose.runtime.*
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Fullscreen
+import androidx.compose.material.icons.filled.FullscreenExit
+import androidx.compose.material.icons.filled.Pause
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import java.util.*
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 
 
 @Composable
@@ -45,39 +73,40 @@ fun VideoPlayer(vodController: VideoController) {
 
     val configuration = LocalConfiguration.current  //获取当前屏幕状态
 
-    /*  var coverImage by remember { mutableStateOf<Bitmap?>(null) }
-      LaunchedEffect(Unit) {
-          val url ="https://www.bilibili.com/video/BV1aS4y1D7dv?t=656.0&p=35"
-          Log.d("===", videoUrl)
-          val mmr = MediaMetadataRetriever()
-          mmr.setDataSource(videoUrl, hashMapOf())
-          withContext(Dispatchers.Default) {
-              coverImage = mmr.getFrameAtTime(0L, MediaMetadataRetriever.OPTION_PREVIOUS_SYNC)
-              mmr.release()
-          }
-      }*/
-
     val activity = LocalContext.current as Activity
     BackHandler(configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
         if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
             activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
         }
     }
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    //监控lifecycle，key 使用controller会频繁触发
+    DisposableEffect(Unit) {
+        val lifecycleEventObserver = LifecycleEventObserver { _, event ->
+            Log.d("===",event.name)
+            when (event) {//lifecycle 被暂停或者唤醒
+
+                Lifecycle.Event.ON_RESUME -> vodController.resume()
+                Lifecycle.Event.ON_PAUSE -> vodController.pause()
+                else -> {
+                    Log.d("===","lifecycle")
+                }
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(lifecycleEventObserver)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(lifecycleEventObserver)
+            vodController.stopPlay()
+        }
+    }
+
     //控制控制器是否显示
     var showControllerBar by remember { mutableStateOf(false) }
-    var timer: Timer? = null
     Box(modifier = Modifier
         .fillMaxWidth()
         .clickable {  //点击后控制器出现
             showControllerBar = !showControllerBar
-            timer?.cancel()
-            timer = Timer()
-            timer?.schedule(object : TimerTask() {
-                override fun run() {
-                    showControllerBar = false
-                    timer?.cancel()
-                }
-            }, 3000L, 3000L)
         }) {
         VideoView(vodController.videoPlayer)
 
@@ -91,9 +120,10 @@ fun VideoPlayer(vodController: VideoController) {
         }
 
         if (vodController.playerValue.state == PlayState.None) {
-            Box(modifier = Modifier.fillMaxSize()) {
+            Box(modifier = Modifier.fillMaxSize().background(Color.DarkGray)) {
                 IconButton(onClick = {
                     vodController.startPlay()
+                    Log.d("===","PlayState.None,start play")
                 }, modifier = Modifier.align(Alignment.Center)) {
                     Icon(
                         imageVector = Icons.Default.PlayArrow,
@@ -197,3 +227,5 @@ fun VideoPlayer(vodController: VideoController) {
         }
     }
 }
+
+
