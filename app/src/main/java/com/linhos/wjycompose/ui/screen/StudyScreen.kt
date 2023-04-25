@@ -44,11 +44,12 @@ fun StudyScreen(
     articleViewModel: ArticleViewModel = viewModel(),
     videoViewModel: VideoViewModel = viewModel(),
     onNavigateToArticle: () -> Unit = {},
-    onNavigateToVideo: () -> Unit = {}
+    onNavigateToVideo: () -> Unit = {},
+    onNavigateToHistory:()->Unit={}
 ) {
     Column {
 
-        StudystatusBar()
+        StudystatusBar(onNavigateToHistory)
 
         CategoryTab(viewModel)
         TypesRowTab(viewModel)
@@ -86,7 +87,7 @@ fun StudyScreen(
       * 学习的标题栏
       * */
 @Composable
-fun StudystatusBar() {
+fun StudystatusBar(onNavigateToHistory:()->Unit={}) {
     TopAppBar(modifier = Modifier.padding(horizontal = 8.dp)) {
         Row {
             Surface(
@@ -115,7 +116,9 @@ fun StudystatusBar() {
             }
 
             Spacer(modifier = Modifier.width(8.dp))
-            Text(text = "学习\n进度", fontSize = 10.sp, color = Color.White)
+            Text(text = "学习\n进度", fontSize = 10.sp, color = Color.White, modifier = Modifier.clickable {
+                onNavigateToHistory()
+            })
             Spacer(modifier = Modifier.width(8.dp))
             Text(text = "26%", fontSize = 12.sp, color = Color.White)
             Spacer(modifier = Modifier.width(8.dp))

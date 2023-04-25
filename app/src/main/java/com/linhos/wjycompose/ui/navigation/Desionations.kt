@@ -8,4 +8,5 @@ sealed class Desionations(val route: String) {
     object ArticleDetail : Desionations("ArticleDetail")
 
     object VideoDetail: Desionations("VideoDetail")
+    object Login:Desionations("Login")
 }
