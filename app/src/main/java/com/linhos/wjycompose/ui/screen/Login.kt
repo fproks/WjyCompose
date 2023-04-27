@@ -145,21 +145,29 @@ fun LoginScreen(onBack: () -> Unit = {}) {
                             })
                     })
                 Spacer(modifier = Modifier.height(20.dp))
-                val context =LocalContext.current
+                val context = LocalContext.current
                 Text(
                     text = "登  录",
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
                         .clickable {
-
-                            Toast.makeText(
-                                context,
-                                "已登录，用户名 $userName 密码 $password",
-                                Toast.LENGTH_LONG
-                            ).show()
-                            userViewModel.login(userName, password)
-                            onBack()
+                            userViewModel.login(userName, password) {
+                                if (it) {
+                                    Toast.makeText(
+                                        context,
+                                        "已登录，用户名 $userName 密码 $password",
+                                        Toast.LENGTH_LONG
+                                    ).show()
+                                    onBack()
+                                } else {
+                                    Toast.makeText(
+                                        context,
+                                        "登录失败，用户名 $userName 密码 $password",
+                                        Toast.LENGTH_LONG
+                                    ).show()
+                                }
+                            }
                         },
                     textAlign = TextAlign.Center
                 )

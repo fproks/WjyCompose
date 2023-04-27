@@ -25,7 +25,7 @@ fun NaviHostApp() {
     val navController = rememberAnimatedNavController()
     val context: Context = LocalContext.current
 
-    CompositionLocalProvider(ActivateUserViewModel provides UserViewModel()) {
+    CompositionLocalProvider(ActivateUserViewModel provides UserViewModel(LocalContext.current)) {
 
         val userViewModel = ActivateUserViewModel.current
 
