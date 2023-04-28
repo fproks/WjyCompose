@@ -9,15 +9,26 @@ import androidx.lifecycle.ViewModel
 import com.linhos.wjycompose.model.entity.Category
 import com.linhos.wjycompose.model.entity.DataType
 import com.linhos.wjycompose.model.entity.SwiperEntity
+import com.linhos.wjycompose.model.service.HomeService
 
 class MainViewModel : ViewModel() {
-    val categorys by
-    mutableStateOf(
+    var categorys by mutableStateOf(
         listOf(
-            Category("生活学习", Icons.Default.Person),
-            Category("生活学习", Icons.Default.Person)
+            Category("生活学习", "123"),
+            Category("生活学习", "123")
         )
     )
+        private set
+
+    suspend fun categorysData() {
+        val res = HomeService.instance().category()
+        if (res.code == 0) {
+            categorys = res.data
+        }else{
+            val message =res.message
+        }
+    }
+
 
     var studyCategoryIndex by mutableStateOf(0)
         private set
