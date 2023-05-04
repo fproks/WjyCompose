@@ -20,12 +20,16 @@ class MainViewModel : ViewModel() {
     )
         private set
 
+    var placeholder by mutableStateOf(false)
+        private set
+
     suspend fun categorysData() {
         val res = HomeService.instance().category()
         if (res.code == 0) {
             categorys = res.data
-        }else{
-            val message =res.message
+            placeholder = true
+        } else {
+            val message = res.message
         }
     }
 

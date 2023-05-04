@@ -83,6 +83,7 @@ dependencies {
 
     //implementation "androidx.navigation:navigation-compose:$nav_version"
     implementation "com.google.accompanist:accompanist-systemuicontroller:0.30.0"
+    implementation "com.google.accompanist:accompanist-placeholder-material:0.30.0" //place_holder
 
     implementation "androidx.compose.foundation:foundation:1.4.0"
 

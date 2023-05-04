@@ -9,10 +9,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
+import com.google.accompanist.placeholder.material.placeholder
 import com.linhos.wjycompose.ui.components.ArticleItem
 import com.linhos.wjycompose.ui.components.NotificationContent
 import com.linhos.wjycompose.ui.components.TopAppBar
@@ -160,7 +161,8 @@ fun CategoryTab(viewModel: MainViewModel = viewModel()) {
                         Text(
                             text = category.title,
                             fontSize = 14.sp,
-                            maxLines = 1
+                            maxLines = 1,
+                            modifier = Modifier.placeholder(visible = !viewModel.placeholder) //placeholder
                         )
                     },
                     selectedContentColor = Color(0xFF149EE7),
