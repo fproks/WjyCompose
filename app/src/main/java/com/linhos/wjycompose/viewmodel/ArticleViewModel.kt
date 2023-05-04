@@ -1,42 +1,35 @@
 package com.linhos.wjycompose.viewmodel
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.linhos.wjycompose.model.entity.ArticleEntity
+import com.linhos.wjycompose.model.service.HomeService
 
 class ArticleViewModel : ViewModel() {
-    val list = listOf(
-
-        ArticleEntity(
-            title = "新闻列表title 1 新闻列表title 1 新闻列表title 1",
-            source = "新闻来源",
-            timestamp = "2020-02-10"
-        ),
-        ArticleEntity(
-            title = "新闻列表title 2 新闻列表title 2 新闻列表title 2",
-            source = "新闻来源1",
-            timestamp = "2020-02-11"
-        ),
-        ArticleEntity(
-            title = "新闻列表title 3 新闻列表title 3 新闻列表title 3",
-            source = "新闻来源3",
-            timestamp = "2020-02-12"
-        ),
-        ArticleEntity(
-            title = "新闻列表title 1 新闻列表title 1 新闻列表title 1",
-            source = "新闻来源",
-            timestamp = "2020-02-10"
-        ),
-        ArticleEntity(
-            title = "新闻列表title 2 新闻列表title 2 新闻列表title 2",
-            source = "新闻来源1",
-            timestamp = "2020-02-11"
-        ),
-        ArticleEntity(
-            title = "新闻列表title 3 新闻列表title 3 新闻列表title 3",
-            source = "新闻来源3",
-            timestamp = "2020-02-12"
+    private val pageSize = 10
+    private var pageOffset = 1
+    var list by mutableStateOf(
+        listOf(
+            ArticleEntity(
+                title = "新闻列表title 1 新闻列表title 1 新闻列表title 1",
+                source = "新闻来源",
+                timestamp = "2020-02-10"
+            )
         )
     )
+        private set
+    var fetachLoaded by mutableStateOf(false)
+        private set
+
+    suspend fun fetchArticleList() {
+        val res = HomeService.instance().articleList(pageOffset = pageOffset, pageSize = pageSize)
+        if (res.code == 0 && res.data != null) {
+            list = res.data
+            fetachLoaded = true
+        }
+    }
 
     val head = """
 <!DOCTYPE html>

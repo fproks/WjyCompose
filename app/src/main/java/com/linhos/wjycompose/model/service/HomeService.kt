@@ -1,12 +1,24 @@
 package com.linhos.wjycompose.model.service
 
 import com.linhos.wjycompose.model.Network
+import com.linhos.wjycompose.model.entity.ArticleEntity
 import com.linhos.wjycompose.model.entity.Category
+import com.linhos.wjycompose.model.entity.SwiperEntity
 import retrofit2.http.GET
+import retrofit2.http.Query
 
 interface HomeService {
     @GET("category/list")
     suspend fun category(): CategoryResponse
+
+    @GET("recommand/banner")
+    suspend fun banner(): SwiperResponse
+
+    @GET("article/list")
+    suspend fun articleList(
+        @Query("pageOffset") pageOffset: Int,
+        @Query("pageSize") pageSize: Int
+    ): ArticleResponse
 
     companion object {
         private var INSTANCE: HomeService? = null
@@ -23,3 +35,8 @@ interface HomeService {
 
 
 data class CategoryResponse(var data: List<Category>) : BaseResponse()
+
+//轮播图数据
+data class SwiperResponse(val data: List<SwiperEntity>?) : BaseResponse()
+
+data class ArticleResponse(val data: List<ArticleEntity>?) : BaseResponse()

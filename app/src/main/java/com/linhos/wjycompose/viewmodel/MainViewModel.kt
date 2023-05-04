@@ -1,7 +1,8 @@
 package com.linhos.wjycompose.viewmodel
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.Description
+import androidx.compose.material.icons.filled.SmartDisplay
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -54,15 +55,22 @@ class MainViewModel : ViewModel() {
         typesIndex = index
     }
 
-    val swipeUrl by mutableStateOf(
-        listOf(
-            SwiperEntity("https://picsum.photos/200/300?random=1"),
-            SwiperEntity("https://picsum.photos/200/300?random=2"),
-            SwiperEntity("https://picsum.photos/200/300?random=3"),
-            SwiperEntity("https://picsum.photos/200/300?random=4"),
-            SwiperEntity("https://picsum.photos/200/300?random=5")
-        )
-    )
+    var swipeUrl by mutableStateOf(listOf(SwiperEntity("https://picsum.photos/200/300?random=1")))
+        private set
+    var swiperLoaded by mutableStateOf(false)
+    private  set
+
+    //获取轮播数据
+    suspend fun swiperDate() {
+        val swiperResponse = HomeService.instance().banner()
+        if (swiperResponse.code == 0 && swiperResponse.data != null) {
+            swipeUrl = swiperResponse.data
+            swiperLoaded=true
+        } else {
+            val message = swiperResponse.message
+        }
+
+    }
 
     val notificationData by mutableStateOf(
         listOf(

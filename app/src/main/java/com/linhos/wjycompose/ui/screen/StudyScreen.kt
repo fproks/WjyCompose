@@ -28,7 +28,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
+import com.google.accompanist.placeholder.PlaceholderHighlight
 import com.google.accompanist.placeholder.material.placeholder
+import com.google.accompanist.placeholder.material.shimmer
 import com.linhos.wjycompose.ui.components.ArticleItem
 import com.linhos.wjycompose.ui.components.NotificationContent
 import com.linhos.wjycompose.ui.components.TopAppBar
@@ -51,6 +53,7 @@ fun StudyScreen(
 ) {
     LaunchedEffect(key1 = Unit) {
         viewModel.categorysData()
+        articleViewModel.fetchArticleList()
     }
     Column {
 
@@ -68,10 +71,15 @@ fun StudyScreen(
             if (viewModel.typesIndex == 0) {
                 items(articleViewModel.list) { article ->
                     //添加了一个导航
-                    ArticleItem(article, modifier = Modifier.clickable {
-                        Log.d("===", "study click")
-                        onNavigateToArticle()
-                    })
+                    ArticleItem(article, modifier = Modifier
+                        .clickable {
+                            Log.d("===", "study click")
+                            onNavigateToArticle()
+                        }
+                        .placeholder(
+                            visible = !articleViewModel.fetachLoaded,
+                            highlight = PlaceholderHighlight.shimmer()
+                        ))
                 }
             } else {
                 items(videoViewModel.list) { video ->
@@ -209,19 +217,27 @@ fun TypesRowTab(viewModel: MainViewModel = viewModel()) {
 @Preview
 @Composable
 fun Swiper(viewModel: MainViewModel = viewModel()) {
+
     val virtualPageSize = Int.MAX_VALUE  //循环轮播
-    val actualPageSize = viewModel.swipeUrl.size
+    var actualPageSize = viewModel.swipeUrl.size
     val initPageIndex = virtualPageSize / 2
     val pagerState = rememberPagerState(initialPage = initPageIndex)
     val mod = Math.floorMod(initPageIndex, actualPageSize)
     if (actualPageSize > 0) {
         val coroutineScope = rememberCoroutineScope()
         DisposableEffect(Unit) {
+            coroutineScope.launch {
+                viewModel.swiperDate()
+                Log.d("===","swipUrl is ${viewModel.swipeUrl.size}")
+                actualPageSize = viewModel.swipeUrl.size
+            }
             val timer = Timer() //定时器
             timer.schedule(object : TimerTask() {
                 override fun run() {
                     coroutineScope.launch {
-                        pagerState.animateScrollToPage(pagerState.currentPage + 1) //翻页
+                        if(viewModel.swiperLoaded) {
+                            pagerState.animateScrollToPage(pagerState.currentPage + 1) //翻页
+                        }
                     }
 
                 }
@@ -237,7 +253,8 @@ fun Swiper(viewModel: MainViewModel = viewModel()) {
             modifier = Modifier
                 .clip(RoundedCornerShape(8.dp))
                 .height(200.dp),
-            state = pagerState
+            state = pagerState,
+            userScrollEnabled = viewModel.swiperLoaded
         ) { index ->
             AsyncImage(
                 model = viewModel.swipeUrl[Math.floorMod(index - mod, actualPageSize)].imageUrl,
