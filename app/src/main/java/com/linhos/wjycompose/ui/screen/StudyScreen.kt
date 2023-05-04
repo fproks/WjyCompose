@@ -9,14 +9,22 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -38,10 +46,12 @@ import com.linhos.wjycompose.ui.components.VideoItem
 import com.linhos.wjycompose.viewmodel.ArticleViewModel
 import com.linhos.wjycompose.viewmodel.MainViewModel
 import com.linhos.wjycompose.viewmodel.VideoViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.*
 
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun StudyScreen(
     viewModel: MainViewModel = viewModel(),
@@ -55,41 +65,66 @@ fun StudyScreen(
         viewModel.categorysData()
         articleViewModel.fetchArticleList()
     }
+
+    val refreshScope = rememberCoroutineScope()
+    var refreshing by remember { mutableStateOf(false) }
+    fun refresh() = refreshScope.launch {
+        refreshing = true
+        articleViewModel.fetchArticleList()
+        delay(1500)
+        refreshing = false
+    }
     Column {
 
         StudystatusBar(onNavigateToHistory)
 
         CategoryTab(viewModel)
         TypesRowTab(viewModel)
-        LazyColumn {
-            item {
-                Swiper(viewModel)
-            }
-            item {
-                NotificationContent(viewModel)
-            }
-            if (viewModel.typesIndex == 0) {
-                items(articleViewModel.list) { article ->
-                    //添加了一个导航
-                    ArticleItem(article, modifier = Modifier
-                        .clickable {
-                            Log.d("===", "study click")
-                            onNavigateToArticle()
+
+        //https://developer.android.com/reference/kotlin/androidx/compose/material/pullrefresh/package-summary
+        //下拉刷新
+        val pullRefreshState =
+            rememberPullRefreshState(refreshing = refreshing, onRefresh = ::refresh)//下拉时触发onRefresh
+        Box(Modifier.pullRefresh(pullRefreshState)) {
+
+            LazyColumn {
+                item {
+                    Swiper(viewModel)
+                }
+                item {
+                    NotificationContent(viewModel)
+                }
+                if (!refreshing) {
+                    if (viewModel.typesIndex == 0) {
+                        items(articleViewModel.list) { article ->
+                            //添加了一个导航
+                            ArticleItem(article, modifier = Modifier
+                                .clickable {
+                                    Log.d("===", "study click")
+                                    onNavigateToArticle()
+                                }
+                                .placeholder(
+                                    visible = !articleViewModel.fetachLoaded,
+                                    highlight = PlaceholderHighlight.shimmer()
+                                ))
                         }
-                        .placeholder(
-                            visible = !articleViewModel.fetachLoaded,
-                            highlight = PlaceholderHighlight.shimmer()
-                        ))
-                }
-            } else {
-                items(videoViewModel.list) { video ->
-                    //添加导航点击事件
-                    VideoItem(video, modifier = Modifier.clickable {
-                        Log.d("===", "navigate to video")
-                        onNavigateToVideo()
-                    })
+                    } else {
+                        items(videoViewModel.list) { video ->
+                            //添加导航点击事件
+                            VideoItem(video, modifier = Modifier.clickable {
+                                Log.d("===", "navigate to video")
+                                onNavigateToVideo()
+                            })
+                        }
+                    }
                 }
             }
+            //refresh 的指示器，仅当refreshing 为true 时才显示
+            PullRefreshIndicator(
+                refreshing = refreshing, state = pullRefreshState, Modifier.align(
+                    Alignment.TopCenter
+                )
+            )
         }
 
     }
@@ -228,14 +263,14 @@ fun Swiper(viewModel: MainViewModel = viewModel()) {
         DisposableEffect(Unit) {
             coroutineScope.launch {
                 viewModel.swiperDate()
-                Log.d("===","swipUrl is ${viewModel.swipeUrl.size}")
+                Log.d("===", "swipUrl is ${viewModel.swipeUrl.size}")
                 actualPageSize = viewModel.swipeUrl.size
             }
             val timer = Timer() //定时器
             timer.schedule(object : TimerTask() {
                 override fun run() {
                     coroutineScope.launch {
-                        if(viewModel.swiperLoaded) {
+                        if (viewModel.swiperLoaded) {
                             pagerState.animateScrollToPage(pagerState.currentPage + 1) //翻页
                         }
                     }

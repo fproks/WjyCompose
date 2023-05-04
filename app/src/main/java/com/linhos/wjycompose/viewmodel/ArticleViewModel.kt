@@ -31,6 +31,7 @@ class ArticleViewModel : ViewModel() {
         }
     }
 
+
     val head = """
 <!DOCTYPE html>
 <html lang="zh-cmn-Hans">
