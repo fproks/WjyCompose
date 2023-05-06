@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -39,10 +40,12 @@ import coil.compose.AsyncImage
 import com.google.accompanist.placeholder.PlaceholderHighlight
 import com.google.accompanist.placeholder.material.placeholder
 import com.google.accompanist.placeholder.material.shimmer
+import com.google.accompanist.placeholder.placeholder
 import com.linhos.wjycompose.ui.components.ArticleItem
 import com.linhos.wjycompose.ui.components.NotificationContent
 import com.linhos.wjycompose.ui.components.TopAppBar
 import com.linhos.wjycompose.ui.components.VideoItem
+import com.linhos.wjycompose.ui.extension.OnBottomReached
 import com.linhos.wjycompose.viewmodel.ArticleViewModel
 import com.linhos.wjycompose.viewmodel.MainViewModel
 import com.linhos.wjycompose.viewmodel.VideoViewModel
@@ -64,14 +67,20 @@ fun StudyScreen(
     LaunchedEffect(key1 = Unit) {
         viewModel.categorysData()
         articleViewModel.fetchArticleList()
+        videoViewModel.fetchList()
     }
 
     val refreshScope = rememberCoroutineScope()
     var refreshing by remember { mutableStateOf(false) }
     fun refresh() = refreshScope.launch {
         refreshing = true
-        articleViewModel.fetchArticleList()
-        delay(1500)
+        if (viewModel.typesIndex == 0) {
+            articleViewModel.refresh()
+            delay(1500)
+        } else {
+            videoViewModel.refresh()
+            delay(1500)
+        }
         refreshing = false
     }
     Column {
@@ -85,9 +94,20 @@ fun StudyScreen(
         //下拉刷新
         val pullRefreshState =
             rememberPullRefreshState(refreshing = refreshing, onRefresh = ::refresh)//下拉时触发onRefresh
+        val lazyColumnState = rememberLazyListState()//LazyListState
+        lazyColumnState.OnBottomReached {
+            refreshScope.launch {
+                Log.d("===","types ${viewModel.typesIndex}")
+                if (viewModel.typesIndex == 0) {
+                    articleViewModel.refresh()
+                } else {
+                    videoViewModel.refresh()
+                }
+            }
+        }
         Box(Modifier.pullRefresh(pullRefreshState)) {
 
-            LazyColumn {
+            LazyColumn(state = lazyColumnState) {
                 item {
                     Swiper(viewModel)
                 }
@@ -111,10 +131,15 @@ fun StudyScreen(
                     } else {
                         items(videoViewModel.list) { video ->
                             //添加导航点击事件
-                            VideoItem(video, modifier = Modifier.clickable {
-                                Log.d("===", "navigate to video")
-                                onNavigateToVideo()
-                            })
+                            VideoItem(video, modifier = Modifier
+                                .clickable {
+                                    Log.d("===", "navigate to video")
+                                    onNavigateToVideo()
+                                }
+                                .placeholder(
+                                    visible = !videoViewModel.fatchLoaded,
+                                    highlight = PlaceholderHighlight.shimmer()
+                                ))
                         }
                     }
                 }

@@ -30,6 +30,9 @@ fun ArticleDetailScreen(articleViewModel: ArticleViewModel = viewModel(), onBack
     val scaffoldState = rememberBottomSheetScaffoldState()
     val coroutineScope = rememberCoroutineScope()
     val myWebViewState = rememberMyWebViewStateWithData(articleViewModel.content)
+    LaunchedEffect(key1 = Unit){
+        articleViewModel.fetchArticleDetail()
+    }
 
 
     BottomSheetScaffold(scaffoldState = scaffoldState,
@@ -48,17 +51,21 @@ fun ArticleDetailScreen(articleViewModel: ArticleViewModel = viewModel(), onBack
                 Icon(
                     imageVector = Icons.Default.FormatSize,
                     contentDescription = null,
-                    modifier = Modifier.clickable {
-                        coroutineScope.launch {
-                            if (scaffoldState.bottomSheetState.isCollapsed) {
-                                scaffoldState.bottomSheetState.expand()
-                            } else scaffoldState.bottomSheetState.collapse()
+                    modifier = Modifier
+                        .clickable {
+                            coroutineScope.launch {
+                                if (scaffoldState.bottomSheetState.isCollapsed) {
+                                    scaffoldState.bottomSheetState.expand()
+                                } else scaffoldState.bottomSheetState.collapse()
+                            }
                         }
-                    }.padding(start = 16.dp, end = 8.dp)
+                        .padding(start = 16.dp, end = 8.dp)
                 )
             })
         },
-        modifier = Modifier.background(MaterialTheme.colors.primary).statusBarsPadding(),
+        modifier = Modifier
+            .background(MaterialTheme.colors.primary)
+            .statusBarsPadding(),
         sheetPeekHeight = 0.dp,
         sheetContent = {
             Column(modifier = Modifier.padding(8.dp)) {

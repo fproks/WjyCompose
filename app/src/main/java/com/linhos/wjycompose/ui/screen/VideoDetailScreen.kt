@@ -37,6 +37,9 @@ fun VideoDetailScreen(videoViewModel: VideoViewModel = viewModel(), onBack: () -
     val systemUiController = rememberSystemUiController() //控制状态栏
     val configuration = LocalConfiguration.current
     val activity =(LocalContext.current as Activity)
+    LaunchedEffect(Unit){
+        videoViewModel.fetchVideoInfo()
+    }
     LaunchedEffect(configuration.orientation) {
         vodController.restore()
         //横屏时状态栏隐藏并透明
@@ -79,9 +82,13 @@ fun VideoDetailScreen(videoViewModel: VideoViewModel = viewModel(), onBack: () -
                     }
                 )
             },
-            modifier = Modifier.background(MaterialTheme.colors.primary).statusBarsPadding()
+            modifier = Modifier
+                .background(MaterialTheme.colors.primary)
+                .statusBarsPadding()
         ) { padding ->
-            Column(modifier = Modifier.padding(padding).fillMaxSize()) {
+            Column(modifier = Modifier
+                .padding(padding)
+                .fillMaxSize()) {
                 Box(modifier = Modifier.height(200.dp)) {
                     VideoPlayer(vodController)
 

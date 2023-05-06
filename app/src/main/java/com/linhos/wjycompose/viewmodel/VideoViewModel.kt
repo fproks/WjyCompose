@@ -1,13 +1,15 @@
 package com.linhos.wjycompose.viewmodel
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.linhos.wjycompose.model.entity.VideoEntity
+import com.linhos.wjycompose.model.service.HomeService
 
 class VideoViewModel : ViewModel() {
-    val list =
+    var list by mutableStateOf(
         listOf(
             VideoEntity(
                 title = "第一个video entity title,第一个video entity title,第一个video entity title,第一个video entity title",
@@ -53,8 +55,46 @@ class VideoViewModel : ViewModel() {
                 imageUrl = "https://picsum.photos/200/300?random=8"
             )
         )
+    )
+    private val pageSize=10
+    private var pageOffset=1
+    suspend fun fetchList(){
+       val res= HomeService.instance().videoList(pageOffset,pageSize)
+        pageOffset++
+        Log.d("===","fetchList")
+        Log.d("===","${res.code}")
+        if(res.code==0 && res.data!=null){
+            Log.d("===","fetchList true")
+            list=res.data
+            fatchLoaded=true
+        }
+
+    }
+    var fatchLoaded by mutableStateOf(false)
+    suspend fun refresh(){
+        fetchList()
+        if (list.size<pageSize){
+            pageOffset=1
+        }
+    }
+
+    suspend fun fetchVideoInfo(){
+        val info =HomeService.instance().videoInfo("")
+        if (info.code==0 ){
+            info.data?.let {
+                title=it.title
+                content="""$head
+                    ${it.desc}
+                    $end
+                """.trimMargin()
+
+                if (it.video!=null)videoUrl=it.video
+            }
+        }
+    }
 
     var title by mutableStateOf("中老铁路首趟国际旅客列车发车，昆明至万象间可实现乘火车当日通达")
+
 
     val head = """
         <!DOCTYPE html>
